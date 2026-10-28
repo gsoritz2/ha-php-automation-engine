@@ -40,6 +40,13 @@ if [[ ! -f "$SCRIPT_DIR/.seeded" ]]; then
     echo "[run.sh] Beispiel-Automationen nach $SCRIPT_DIR kopiert"
 fi
 
+# Arbeitskopie der KO-Map immer vorhalten (auch bei bestehenden Installationen),
+# damit ko_get()/ko_set() nicht bei jedem Zugriff warnen
+if [[ ! -f "$SCRIPT_DIR/ko_map.json" ]]; then
+    cp /app/examples/ko_map.example.json "$SCRIPT_DIR/ko_map.json" 2>/dev/null || true
+    echo "[run.sh] ko_map.json aus dem Beispiel angelegt"
+fi
+
 echo "[run.sh] PHP $(php -r 'echo PHP_VERSION;') | Skripte: $SCRIPT_DIR | Poll: ${POLL_INTERVAL}s | Log: $LOG_LEVEL"
 echo "[run.sh] API-Basis: ${HA_API_BASE:-http://supervisor/core/api}"
 
