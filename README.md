@@ -26,6 +26,7 @@ tests/
   run_tests.py                  # Integrationstests gegen echtes PHP
   test_cron.php                 # Unit-Tests (Cron, Dauer, Trigger-Bedingungen)
   test_solar_lbs.py             # Szenariotest des portierten LBS "Solaranlage"
+  test_presets.sh               # Installation/Update der Vorgabe-Skripte
 ```
 
 ## Warum kein Edomi-PHP direkt?

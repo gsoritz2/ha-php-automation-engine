@@ -93,19 +93,26 @@ Engine::poll(false); // Erstbefuellung ohne Trigger-Feuer
 $lastPoll = 0.0;
 $lastShutdownCheck = 0.0;
 
+// Endlosschleife: ein Durchlauf erledigt alles Nicht-Blockierende.
+// Kein sleep(2) - die 100 ms Taktung unten hält Timer/Trigger reaktionsschnell.
 while (true) {
     $loopStart = microtime(true);
 
     try {
+        // 1) HA-Zustände abfragen und State-Trigger auslösen (nur im Poll-Intervall)
         if (($loopStart - $lastPoll) >= (float) $config['poll_interval']) {
             $lastPoll = $loopStart;
-            Engine::poll(true);
+            Engine::poll(true);              // true = Änderungen dürfen Trigger feuern
         }
+        // 2) fällige Timer (every/cron/at) ausführen
         Engine::runTimers();
+        // 3) HTTP-Anfragen bedienen (Ingress-UI, /health-Watchdog, Webhooks)
         if (Engine::$http !== null) {
             Engine::$http->tick();
         }
+        // 4) geänderte Skriptdateien erkennen und neu laden
         Engine::maybeReload();
+        // 5) persistente Skript-Variablen höchstens 1×/s auf Platte schreiben
         Engine::saveVars();
     } catch (Throwable $e) {
         Engine::$errors++;

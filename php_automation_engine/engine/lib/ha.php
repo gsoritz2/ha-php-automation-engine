@@ -99,12 +99,19 @@ final class HaApi
     /** @return array<string,mixed>|null */
     public function getState(string $entityId, bool $useCache = true): ?array
     {
+        // Cache nur innerhalb der TTL benutzen: ein einmal gelesener Wert darf nicht
+        // dauerhaft als aktuell gelten (Ausgänge würden sonst auf ihrem Startwert einfrieren).
         if ($useCache && (microtime(true) - $this->stateCacheAt) < $this->stateCacheTtl
             && array_key_exists($entityId, $this->stateCache)) {
             return $this->stateCache[$entityId];
         }
+
+        // throwOnError=false: eine unbekannte Entity (404) ist kein Fehler, sondern
+        // "nicht vorhanden" -> null zurückgeben, Aufrufer entscheidet über Default.
         $r = $this->request('GET', '/states/' . rawurlencode($entityId), null, false);
         $state = is_array($r) ? $r : null;
+
+        // abgelaufenen Gesamtcache verwerfen (TTL gilt für alle Einträge gemeinsam)
         if (!$useCache || (microtime(true) - $this->stateCacheAt) >= $this->stateCacheTtl) {
             $this->stateCache = [];
             $this->stateCacheAt = microtime(true);

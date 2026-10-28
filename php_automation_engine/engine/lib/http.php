@@ -61,7 +61,11 @@ final class HttpServer
     /** @param resource $conn */
     private function handle($conn): void
     {
+        // Zeitbudget pro Verbindung: ein langsamer/stummer Client darf den
+        // Engine-Loop (Pollen, Timer, Trigger) nicht blockieren.
         $deadline = microtime(true) + 2.0;
+
+        // Kopfzeilen lesen, bis die Leerzeile (\r\n\r\n) auftaucht
         $head = '';
         while (!str_contains($head, "\r\n\r\n")) {
             $chunk = @fread($conn, 4096);

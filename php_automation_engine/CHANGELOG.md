@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.1
+
+* Inline-Kommentare: das Solaranlagen-Preset ist zeilenweise kommentiert (mit Bezug
+  auf die jeweilige Edomi-Originalzeile); Engine-Kernstellen (Polling, State-Cache,
+  HTTP-Server, Hauptschleife) sind im Detail erklärt
+* Vorgaben werden jetzt **aktualisiert**, solange sie nicht selbst angepasst wurden:
+  md5 der zuletzt ausgelieferten Fassung steht in `<script_dir>/.preset_hashes`.
+  Eigene Änderungen bleiben unangetastet (mit Hinweis im Log); Vorgaben aus
+  Versionen vor der Hash-Verwaltung werden einmalig aktualisiert
+* `run.sh` nutzt überschreibbare Verzeichnisse (`PHPENGINE_SCRIPT_DIR`,
+  `PHPENGINE_DATA_DIR`, `PHPENGINE_EXAMPLES_DIR`, `PHPENGINE_PRESET_DIR`) für Tests
+* Neuer Test `tests/test_presets.sh` (13 Prüfungen) für Installation, Update,
+  Schutz eigener Anpassungen und Altbestand
+
 ## 0.2.0
 
 * `engine/presets/`: portierte EDOMI-Logikbausteine werden beim Start nach

@@ -94,8 +94,16 @@ oder VSE-Anbindung – die brauchen echte Handarbeit.
 ## Mitgelieferte EDOMI-Portierungen (Presets)
 
 Im App-Image liegen unter `engine/presets/` fertig portierte Logikbausteine. Beim
-Start werden sie nach `script_dir` kopiert – **nur wenn dort noch keine gleichnamige
-Datei liegt**, eigene Änderungen bleiben also erhalten.
+Start werden sie nach `script_dir` kopiert. Ob eine vorhandene Datei überschrieben
+wird, entscheidet der md5 der zuletzt ausgelieferten Fassung in
+`<script_dir>/.preset_hashes`:
+
+| Zustand der Datei in `script_dir` | Verhalten |
+| --- | --- |
+| fehlt | wird installiert |
+| identisch mit der letzten Auslieferung | wird bei neuer App-Version aktualisiert |
+| vom Nutzer geändert | bleibt unangetastet, Hinweis im Log |
+| aus einer App-Version ohne Hash-Verwaltung (und ohne `@preset-version`-Marker) | einmalige Aktualisierung |
 
 ### `20_edomi_solaranlage.php` — LBS "Solaranlage"
 

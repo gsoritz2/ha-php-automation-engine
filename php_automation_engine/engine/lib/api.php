@@ -224,13 +224,18 @@ final class Engine
         $new = [];
         if ($entities !== []) {
             if (count($entities) <= self::PER_ENTITY_LIMIT) {
+                // Wenige Entities: gezielt einzeln abfragen (ein Request pro Entity)
                 foreach ($entities as $e) {
-                    $s = self::$api->getState($e, false);
+                    $s = self::$api->getState($e, false);   // useCache=false: immer frisch
                     if (is_array($s)) {
                         $new[$e] = $s;
                     }
+                    // null = Entity existiert (noch) nicht -> Eintrag bleibt leer,
+                    // der Trigger dafür feuert dann nie (z. B. noch fehlender Helfer)
                 }
             } else {
+                // Viele Entities: einmal die komplette /states-Liste holen und filtern -
+                // deutlich weniger Requests als ein Request je Entity.
                 $wanted = array_flip($entities);
                 foreach (self::$api->getStates() as $s) {
                     $id = $s['entity_id'] ?? null;
@@ -249,11 +254,14 @@ final class Engine
             $cur = $new[$e] ?? null;
             self::$states[$e] = $cur;
 
+            // $fire=false beim allerersten Poll: nur Zustaende einsammeln, nichts feuern
             if (!$fire || $cur === null) {
                 continue;
             }
+            // Kein Vorwert vorhanden -> Erstbefuellung. Wuerde hier gefeuert, loesten
+            // beim Start alle abonnierten Entities gleichzeitig einen Trigger aus.
             if ($old === null) {
-                continue; // Erstbefuellung: kein Trigger-Feuer beim Start
+                continue;
             }
             $newState = (string) ($cur['state'] ?? '');
             $oldState = (string) ($old['state'] ?? '');
