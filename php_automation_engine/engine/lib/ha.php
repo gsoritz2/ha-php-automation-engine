@@ -133,7 +133,7 @@ final class HaApi
         if ($attributes !== []) {
             $payload['attributes'] = $attributes;
         }
-        $this->stateCache[$entityId] = null;
+        unset($this->stateCache[$entityId]); // naechster Lesezugriff holt frisch
         return $this->request('POST', '/states/' . rawurlencode($entityId), $payload);
     }
 

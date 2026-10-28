@@ -130,6 +130,19 @@ final class Engine
 
     public static function loadScript(string $file): void
     {
+        // Skripte werden bei jedem Reload erneut eingebunden: eine zweite Top-Level-
+        // Deklaration (function/class/const) waere ein Fatalfehler und wuerde die
+        // Engine beenden. Deshalb vorab pruefen und sauber ablehnen.
+        $src = @file_get_contents($file);
+        if (is_string($src) && preg_match('/^[\t ]*(function|class|interface|trait|enum|const)\s/i', $src, $m) === 1) {
+            $msg = "Top-Level-Deklaration '" . $m[1] . "' nicht erlaubt - Inhalt in eine Closure kapseln (Skripte werden bei jedem Reload erneut eingebunden)";
+            self::$scriptErrors[$file] = $msg;
+            self::$errors++;
+            self::$lastError = basename($file) . ': ' . $msg;
+            Log::add('error', sprintf('Skript %s wird nicht geladen: %s', basename($file), $msg));
+            return;
+        }
+
         $prev = self::$currentScript;
         self::$currentScript = $file;
         try {
@@ -525,16 +538,22 @@ function ha(): HaApi
     return Engine::$api;
 }
 
-/** Zustand (state) einer Entity; optional ein Attribut. */
+/**
+ * Zustand (state) einer Entity; optional ein Attribut.
+ *
+ * Wichtig: Engine::$states wird nur fuer *abonnierte* Entities (state_trigger)
+ * aktuell gehalten. Fuer alle anderen Entities wird bei jedem Aufruf die API
+ * gefragt (mit 1s-TTL-Cache in HaApi) - sonst wuerde ein einmal gelesener Wert
+ * fuer immer als aktuell gelten.
+ */
 function ha_state(string $entity, ?string $attribute = null, mixed $default = null): mixed
 {
-    $s = Engine::stateValue($entity);
+    $s = isset(Engine::$stateTriggers[$entity]) ? Engine::stateValue($entity) : [];
     if ($s === []) {
         $s = Engine::$api->getState($entity);
         if ($s === null) {
             return $default;
         }
-        Engine::$states[$entity] = $s;
     }
     if ($attribute === null) {
         return $s['state'] ?? $default;

@@ -91,6 +91,37 @@ zunächst unverändert weiterläuft:
 Nicht automatisch portierbar sind Bausteine mit eigener SQL-Tabelle, Socket-Servern
 oder VSE-Anbindung – die brauchen echte Handarbeit.
 
+## Mitgelieferte EDOMI-Portierungen (Presets)
+
+Im App-Image liegen unter `engine/presets/` fertig portierte Logikbausteine. Beim
+Start werden sie nach `script_dir` kopiert – **nur wenn dort noch keine gleichnamige
+Datei liegt**, eigene Änderungen bleiben also erhalten.
+
+### `20_edomi_solaranlage.php` — LBS "Solaranlage"
+
+Portiert 1:1 (Reihenfolge, Asymmetrien und Hysterese wie im Original):
+
+| Edomi | hier |
+| --- | --- |
+| E3 T_Kollektor | `sensor.stiebel_eltron_lwz_solarkollektortemperatur` |
+| E4 T_Speicher_unten | `sensor.stiebel_eltron_lwz_ist_temperatur_warmwasser` |
+| E1/E2 T_Diff EIN/AUS | Default 6 / 2 K, übersteuerbar via `input_number.solar_t_diff_ein` / `_aus` |
+| E5/E6 T_max Kollektor/Speicher | Default 110 / 75 °C, via `input_number.solar_t_max_kollektor` / `_speicher` |
+| E7 Zwangssteuerung | Default aus, via `input_boolean.solar_zwangssteuerung` |
+| A1 Pumpe | `binary_sensor.solarpumpe_anforderung` (Pseudo-Sensor) + Event `solarpumpe_anforderung` |
+| A2 Status T_Diff | `sensor.solar_temperaturdifferenz` (K) |
+
+Sobald die Pumpe in HA eine echte Entity hat (z. B. `switch.solarpumpe`), im Skript
+oben `'pumpe' => 'switch.solarpumpe'` eintragen – dann schaltet die Logik zusätzlich
+direkt per `turn_on`/`turn_off` statt nur die Anforderung zu setzen.
+
+Manuell prüfbar: `POST /api/trigger?name=solar_check`.
+
+**Keine Top-Level-Deklarationen:** `function`/`class`/`const` auf oberster Ebene sind
+nicht erlaubt – Skripte werden bei jedem Reload erneut eingebunden, eine zweite
+Deklaration würde die Engine mit einem Fatalfehler beenden. Alles in Closures kapseln;
+die Engine lehnt solche Dateien mit klarer Meldung ab, statt abzustürzen.
+
 ## HTTP-Endpunkte
 
 Alles läuft im Engine-Prozess, Port **8099** (Ingress-Panel „PHP Automation"):

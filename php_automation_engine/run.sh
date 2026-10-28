@@ -47,6 +47,18 @@ if [[ ! -f "$SCRIPT_DIR/ko_map.json" ]]; then
     echo "[run.sh] ko_map.json aus dem Beispiel angelegt"
 fi
 
+# Mitgelieferte Vorgabe-Skripte (z. B. portierte EDOMI-Logikbausteine) installieren,
+# sofern die Datei nicht schon vorhanden ist - eigene Aenderungen bleiben unberuehrt.
+if [[ -d /app/presets ]]; then
+    for f in /app/presets/*.php; do
+        [[ -e "$f" ]] || continue
+        base="$(basename "$f")"
+        if [[ ! -f "$SCRIPT_DIR/$base" ]]; then
+            cp "$f" "$SCRIPT_DIR/$base" && echo "[run.sh] Vorgabe installiert: $base"
+        fi
+    done
+fi
+
 echo "[run.sh] PHP $(php -r 'echo PHP_VERSION;') | Skripte: $SCRIPT_DIR | Poll: ${POLL_INTERVAL}s | Log: $LOG_LEVEL"
 echo "[run.sh] API-Basis: ${HA_API_BASE:-http://supervisor/core/api}"
 

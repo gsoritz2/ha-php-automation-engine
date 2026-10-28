@@ -20,9 +20,12 @@ php_automation_engine/
     lib/log.php                 # Log mit Ringpuffer
     www/index.php               # Status-UI (Ingress-Panel)
     examples/                   # Beispiel-Automationen, ko_map.example.json
+    presets/                    # portierte EDOMI-Logikbausteine (werden nach script_dir kopiert)
 tests/
   mock_ha.py                    # Mock der HA-REST-API (stdlib)
   run_tests.py                  # Integrationstests gegen echtes PHP
+  test_cron.php                 # Unit-Tests (Cron, Dauer, Trigger-Bedingungen)
+  test_solar_lbs.py             # Szenariotest des portierten LBS "Solaranlage"
 ```
 
 ## Warum kein Edomi-PHP direkt?

@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.2.0
+
+* `engine/presets/`: portierte EDOMI-Logikbausteine werden beim Start nach
+  `script_dir` installiert, sofern die Datei dort noch nicht existiert
+  (bestehende/eigene Dateien bleiben unangetastet)
+* Erstes Preset: `20_edomi_solaranlage.php` – 1:1-Portierung des LBS "Solaranlage"
+  (Hysterese T_Diff EIN/AUS, Grenzwerte Kollektor/Speicher, Zwangssteuerung),
+  Ausgang als Anforderungs-Pseudo-Sensor, Vorgaben per `input_number`/`input_boolean`
+  übersteuerbar; 22 Szenariotests in `tests/test_solar_lbs.py`
+* **Bugfix:** `ha_state()` hat Werte von Entities ohne `state_trigger` dauerhaft in
+  `Engine::$states` zwischengespeichert und danach nie neu gelesen (Ausgänge froren
+  auf dem ersten gelesenen Zustand ein). Nicht abonnierte Entities werden jetzt bei
+  jedem Zugriff über die API gelesen (1 s TTL).
+* **Bugfix:** `HaApi::setState()` hinterließ einen `null`-Eintrag im State-Cache;
+  der nächste Lesezugriff konnte `null` statt des echten Zustands liefern
+* **Schutz:** Skripte mit Top-Level-Deklaration (`function`/`class`/`const`) werden
+  mit klarer Meldung abgelehnt statt beim Reload die Engine zu beenden
+
 ## 0.1.2
 
 * Version in UI und `/api/status` kommt aus dem Build-Arg `BUILD_VERSION` des

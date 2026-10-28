@@ -1,5 +1,5 @@
 name: "PHP Automation Engine"
-version: "0.1.2"
+version: "0.2.0"
 slug: "php_automation_engine"
 description: "Fuehrt PHP-Automationen (Edomi-LBS-Stil) aus und verbindet sie mit Home Assistant"
 url: "https://github.com/gsoritz2/ha-php-automation-engine/tree/main/php_automation_engine"
