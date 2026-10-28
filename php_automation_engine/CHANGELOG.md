@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+* Version in UI und `/api/status` kommt aus dem Build-Arg `BUILD_VERSION` des
+  Supervisors statt aus einer PHP-Konstante (`dev`, wenn nicht durchgereicht)
+
 ## 0.1.1
 
 * `ko_map.json` wird beim Start immer vorgehalten (auch bei bestehenden Installationen),

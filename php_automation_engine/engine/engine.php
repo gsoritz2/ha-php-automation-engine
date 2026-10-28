@@ -20,7 +20,8 @@ require __DIR__ . '/lib/api.php';
 require __DIR__ . '/lib/http.php';
 require __DIR__ . '/www/index.php';
 
-const ENGINE_VERSION = '0.1.0';
+/** Fallback, wenn BUILD_VERSION nicht durchgereicht wurde. */
+const ENGINE_VERSION = 'dev';
 
 function env_or(string $key, ?string $default = null): ?string
 {
@@ -38,7 +39,7 @@ function env_bool(string $key, bool $default): bool
 }
 
 $config = [
-    'version' => ENGINE_VERSION,
+    'version' => env_or('PHPENGINE_VERSION', ENGINE_VERSION) ?? ENGINE_VERSION,
     'script_dir' => env_or('PHPENGINE_SCRIPT_DIR', '/share/php_automations'),
     'ko_map_file' => null,
     'var_file' => env_or('PHPENGINE_VAR_FILE', '/data/state.json'),

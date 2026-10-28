@@ -4,10 +4,10 @@
 ARG BUILD_FROM=alpine:3.22
 FROM ${BUILD_FROM}
 
-# BUILD_ARCH/BUILD_VERSION/BUILD_NAME werden vom Supervisor uebergeben, hier ungenutzt.
-ARG BUILD_ARCH
-ARG BUILD_VERSION
-ARG BUILD_NAME
+# Der Supervisor uebergibt beim lokalen Build u.a. die App-Version als BUILD_VERSION.
+# Damit meldet die Engine in UI und /api/status die echte Add-on-Version.
+ARG BUILD_VERSION=dev
+ENV PHPENGINE_VERSION=${BUILD_VERSION}
 
 RUN apk add --no-cache \
         bash \
