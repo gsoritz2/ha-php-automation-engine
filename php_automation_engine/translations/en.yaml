@@ -1,0 +1,24 @@
+configuration:
+  script_dir:
+    name: Script directory
+    description: Directory containing the PHP automations (every *.php is loaded).
+  poll_interval:
+    name: Poll interval (s)
+    description: Seconds between two Home Assistant state queries.
+  log_level:
+    name: Log level
+    description: Verbosity of the log.
+  log_lines:
+    name: Log buffer (lines)
+    description: Number of log lines kept in memory for the status UI.
+  timezone:
+    name: Timezone
+    description: Timezone used for at()/cron() schedules.
+  ko_map:
+    name: KO map file
+    description: JSON file with the Edomi KO mapping (relative to the script directory).
+  auto_reload:
+    name: Auto reload
+    description: Reload scripts automatically when a file changes.
+network:
+  8099/tcp: Status/webhook API (for HA rest_command)

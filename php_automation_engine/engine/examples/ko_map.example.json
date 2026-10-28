@@ -1,0 +1,36 @@
+{
+  "1": {
+    "entity": "sensor.pool_temperatur",
+    "type": "float",
+    "comment": "Edomi-KO 1 -> HA-Sensor, wird als Zahl gelesen"
+  },
+  "20": {
+    "entity": "switch.pool_pumpe",
+    "type": "bool",
+    "service_on": "switch.turn_on",
+    "service_off": "switch.turn_off",
+    "comment": "ko_set(20, true/false) schaltet die Pumpe"
+  },
+  "21": {
+    "entity": "number.pool_sollwert",
+    "type": "float",
+    "service_set": "number.set_value",
+    "comment": "ko_set(21, 27.5) setzt den Sollwert"
+  },
+  "30": {
+    "entity": "sensor.pool_modus",
+    "type": "raw",
+    "map": {
+      "auto": 1,
+      "manuell": 2,
+      "urlaub": 3
+    },
+    "comment": "Edomi-Enum: HA-Text -> Edomi-Zahl"
+  },
+  "31": {
+    "entity": "sensor.pool_status",
+    "type": "raw",
+    "attribute": "mode",
+    "comment": "liest statt state ein Attribut"
+  }
+}

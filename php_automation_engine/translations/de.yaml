@@ -1,0 +1,24 @@
+configuration:
+  script_dir:
+    name: Skriptverzeichnis
+    description: Verzeichnis mit den PHP-Automationen (jede *.php wird geladen).
+  poll_interval:
+    name: Abfrageintervall (s)
+    description: Sekunden zwischen zwei HA-Zustandsabfragen. Kleiner = schneller, aber mehr Last.
+  log_level:
+    name: Log-Level
+    description: Ausführlichkeit des Logs.
+  log_lines:
+    name: Log-Puffer (Zeilen)
+    description: Anzahl der Logzeilen, die im Speicher für die Status-UI gehalten werden.
+  timezone:
+    name: Zeitzone
+    description: Zeitzone für at()/cron()-Zeitpläne.
+  ko_map:
+    name: KO-Map-Datei
+    description: JSON-Datei mit der Edomi-KO-Zuordnung (relativ zum Skriptverzeichnis).
+  auto_reload:
+    name: Auto-Reload
+    description: Skripte bei Dateiänderung automatisch neu laden.
+network:
+  8099/tcp: Status-/Webhook-API (für HA rest_command)
